@@ -1,0 +1,8 @@
+# define the runtime language
+runtime "python"
+
+# exec is the file that will be executed:
+exec "market_retriever.py"
+
+pip "psycopg2"
+pip "django"
