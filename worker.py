@@ -21,8 +21,9 @@ import json
 from datetime import datetime, timedelta
 import calendar
 import os
+import time
 
-def executar(inicio, fim):        
+def executar(inicio, fim):   
     pesquisa =  datetime.utcnow() - timedelta(hours=inicio)    
     segundos = calendar.timegm(pesquisa.utctimetuple())
     
@@ -47,19 +48,23 @@ def executar(inicio, fim):
 
 
 if __name__ == '__main__':
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "coinmarket.settings")
-    from market.models import Trade
-    
-    arguments = docopt(__doc__, version='Worker 1.0')
-    
-    if arguments['HORA_FINAL'].isdigit() and arguments['HORA_INICIAL'].isdigit():
-        if int(arguments['HORA_INICIAL']) > int(arguments['HORA_FINAL']):
-            executar(int(arguments['HORA_INICIAL']), int(arguments['HORA_FINAL']))        
+    try:
+        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "coinmarket.settings")
+        from market.models import Trade
+        
+        arguments = docopt(__doc__, version='Worker 1.0')
+        
+        if arguments['HORA_FINAL'].isdigit() and arguments['HORA_INICIAL'].isdigit():
+            if int(arguments['HORA_INICIAL']) > int(arguments['HORA_FINAL']):
+                while True:
+                    executar(int(arguments['HORA_INICIAL']), int(arguments['HORA_FINAL']))                      
+                    time.sleep(120)                    
+            else:
+                print "Hora inicial deve ser maior que hora final"        
         else:
-            print "Hora inicial deve ser maior que hora final"        
-    else:
-        print "Use numbers only"
-
+            print "Use numbers only"
+    except Exception as e:
+        print e.args
 
 
     
