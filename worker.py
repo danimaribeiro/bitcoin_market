@@ -31,10 +31,17 @@ def executar(inicio, fim):
     sfim = calendar.timegm(pfim.utctimetuple())
     
     url = "https://www.mercadobitcoin.com.br/api/trades_litecoin/"\
-    + str(segundos) + "/" + str(sfim)
+        + str(segundos) + "/" + str(sfim)
+    urlBit = "https://www.mercadobitcoin.com.br/api/trades/"\
+        + str(segundos) + "/" + str(sfim)
+        
     request = urllib2.urlopen(url)
     jsonstr = request.read().decode("utf-8")
     obj = json.loads(jsonstr)
+    
+    request = urllib2.urlopen(urlBit)
+    jsonstr = request.read().decode("utf-8")
+    objBit = json.loads(jsonstr)
     
     for item in obj:
         t = Trade()
@@ -46,6 +53,15 @@ def executar(inicio, fim):
         t.coin = "ltc"
         t.save()  
 
+    for item in objBit:
+        t = Trade()
+        t.tid = item["tid"]
+        t.date = datetime.fromtimestamp(item["date"]) - timedelta(hours=2)
+        t.price = item["price"]
+        t.amount = item["amount"]
+        t.type = item["type"]
+        t.coin = "btc"
+        t.save()  
 
 if __name__ == '__main__':
     try:

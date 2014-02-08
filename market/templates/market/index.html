@@ -4,14 +4,22 @@
 
   </head>
   <body>
-    <figure style="width: 1000px; height: 450px;">
+      <div style="width:100%;">
+      <figure style="width: 80%; height: 450px; float:left;">
       <!-- Pygal render() result: -->
      {{ svg|safe }}
       <!-- End of Pygal render() result: -->
     </figure>
-    <a href="?filter=2_dias">2 dias</a>
-    <a href="?filter=dia">1 dia</a>
-    <a href="?filter=doze">12 horas</a>
-    <a href="?filter=seis">6 horas</a>
-    <a href="?filter=hora">1 hora</a>    
+          <div style="display:block;width:10%;float:left;">
+              <li style="list-style:none;">
+             <ul><a href="/market/btc">Bitcoins</a> </ul>
+             <ul><a href="/market/ltc">Litecoins</a></ul>
+             <ul><a href="?filter=2_dias">2 dias</a></ul>
+             <ul><a href="?filter=dia">1 dia</a></ul>
+             <ul><a href="?filter=doze">12 horas</a></ul>
+             <ul><a href="?filter=seis">6 horas</a></ul>
+             <ul><a href="?filter=hora">1 hora</a>   </ul>
+          </li>
+      </div>
+      </div>
   </body>

@@ -14,7 +14,7 @@ def get_key(d):
     return datetime(k.year, k.month, k.day, k.hour, k.minute, 0)
 
 # Create your views here.
-def index(request):
+def index(request, coin="btc"):
     filtro = request.GET.get('filter', '')
           
     line_chart = pygal.Line(width=900, height=500,include_x_axis=False,
@@ -22,7 +22,7 @@ def index(request):
                             legend_at_bottom=True)
     line_chart.title = 'Valor LiteCoin Mercado Bitcoin'
 
-    obj = filter_trade(filtro)
+    obj = filter_trade(filtro, coin)
     line_chart.x_labels =obj['labels']
     
     line_chart.add('Compra' , obj['compra'])
@@ -37,7 +37,7 @@ def index(request):
 
 
 
-def filter_trade(filtro):
+def filter_trade(filtro, moeda):
     compra = []
     venda = []  
     labels = []
@@ -57,9 +57,8 @@ def filter_trade(filtro):
         inicio = base + timedelta(hours=-49)  
         horas =49          
     
-    negociacoes = Trade.objects.filter(date__gte=inicio)
-    
-    
+    negociacoes = Trade.objects.filter(date__gte=inicio, coin=moeda)
+        
     dateList = [ base - timedelta(hours=(x)) for x in range(0, horas)]
     dateList.reverse()
     

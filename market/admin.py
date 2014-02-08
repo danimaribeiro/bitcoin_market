@@ -8,9 +8,9 @@ from market.models import Trade
 
 
 class TradeAdmin(admin.ModelAdmin):
-    fields = ['tid', 'date', 'amount', 'price', 'type']
-    list_display = ['tid', 'date', 'amount', 'price', 'type']
-    list_filter = ['type',  ('date', DateFieldListFilter)]
+    fields = ['tid', 'date', 'amount', 'price', 'type', 'coin']
+    list_display = ['tid', 'date', 'amount', 'price', 'type', 'coin']
+    list_filter = ['type',  ('date', DateFieldListFilter), 'coin']
     search_fields = ['date']
     
     def has_add_permission(self, request):
