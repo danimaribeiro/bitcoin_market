@@ -7,11 +7,8 @@ from market.models import Trade
 from itertools import groupby
 from datetime import datetime, timedelta
 
-
-def get_key(d):
-    # group by 30 minutes
-    k = d.date + timedelta(minutes=-(d.date.minute % 5)) 
-    return datetime(k.year, k.month, k.day, k.hour, k.minute, 0)
+def admin(request):
+    return render(request, "market/index-admin.html")
 
 # Create your views here.
 def index(request, coin="btc"):

@@ -1,25 +1,34 @@
-<!DOCTYPE html>
-<html>
-  <head>
+{% extends "market/layout.html" %}
 
-  </head>
-  <body>
-      <div style="width:100%;">
-      <figure style="width: 80%; height: 450px; float:left;">
-      <!-- Pygal render() result: -->
-     {{ svg|safe }}
-      <!-- End of Pygal render() result: -->
-    </figure>
-          <div style="display:block;width:10%;float:left;">
-              <li style="list-style:none;">
-             <ul><a href="/market/btc">Bitcoins</a> </ul>
-             <ul><a href="/market/ltc">Litecoins</a></ul>
-             <ul><a href="?filter=2_dias">2 dias</a></ul>
-             <ul><a href="?filter=dia">1 dia</a></ul>
-             <ul><a href="?filter=doze">12 horas</a></ul>
-             <ul><a href="?filter=seis">6 horas</a></ul>
-             <ul><a href="?filter=hora">1 hora</a>   </ul>
-          </li>
-      </div>
-      </div>
-  </body>
+{% block title %}Litecoin - Bitcoin Negociações{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <i class="fa fa-bar-chart-o fa-fw"></i>
+                Gráfico de negociações
+                
+                <div class="pull-right">
+                 <a class="btn btn-outline btn-primary btn-xs" href="/market/btc">Bitcoins</a> 
+                 <a class="btn btn-outline btn-primary btn-xs" href="/market/ltc">Litecoins</a>
+                 <a class="btn btn-outline btn-primary btn-xs" href="?filter=2_dias">2 dias</a>
+                 <a class="btn btn-outline btn-primary btn-xs" href="?filter=dia">1 dia</a>
+                 <a class="btn btn-outline btn-primary btn-xs" href="?filter=doze">12 horas</a>
+                 <a class="btn btn-outline btn-primary btn-xs" href="?filter=seis">6 horas</a>
+                 <a class="btn btn-outline btn-primary btn-xs" href="?filter=hora">1 hora</a>
+               </div>
+            </div>
+            <div class="panel-body">            
+              <figure>
+              <!-- Pygal render() result: -->
+             {{ svg|safe }}
+              <!-- End of Pygal render() result: -->
+              </figure>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
