@@ -3,12 +3,31 @@ import pygal
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.template import RequestContext, loader
-from market.models import Trade
+from market.models import Trade, Order
 from itertools import groupby
 from datetime import datetime, timedelta
+from django.views.generic import TemplateView,ListView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.core.urlresolvers import reverse_lazy
 
 def admin(request):
     return render(request, "market/index-admin.html")
+
+class OrderList(ListView):
+    model = Order
+
+class OrderCreate(CreateView):
+    model = Order
+    success_url = reverse_lazy('order_list')
+
+class OrderUpdate(UpdateView):
+    model = Order
+    success_url = reverse_lazy('order_list')
+
+class OrderDelete(DeleteView):
+    model = Order
+    success_url = reverse_lazy('order_list')
+
 
 # Create your views here.
 def index(request, coin="btc"):

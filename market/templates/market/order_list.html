@@ -1,0 +1,50 @@
+{% extends "market/layout.html" %}
+
+{% block title %}Litecoin - Bitcoin Negociações{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <i class="fa fa-bar-chart-o fa-fw"></i>
+                Ordens de compra e venda
+                <a style="margin-left:15px;" class="btn btn-outline btn-success btn-xs" href="{% url "order_new" %}">Nova ordem</a>
+            </div>
+               <div class="panel-body"> 
+                 <div class="table-responsive">
+                    <table class="table">
+                         <thead>
+                             <tr>
+                                 <th>#</th>
+                                 <th>Preço</th>
+                                 <th>Quantidade</th>
+                                 <th>Tipo</th>
+                                 <th>Executada?</th>
+                                 <th>Opções</th>
+                             </tr>
+                        </thead>
+                        <tbody>
+                    {% for order in object_list %}
+                       <tr>
+                         <td><a href="{% url "order_edit" order.id %}">{{order.tid}}</a></td>
+                         <td>{{ order.price }}</td>
+                         <td>{{ order.amount }}</td>
+                         <td>{{ order.type }}</td>
+                         <td>{{ order.sincronizada }}</td>
+                         <td>                            
+                            <a href="{% url "order_delete" order.tid %}">Deletar</a>
+                         </td>
+                        </tr>
+                       {% endfor %}
+                       </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>                  
+
+
+{% endblock %}
