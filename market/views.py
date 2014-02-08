@@ -18,7 +18,7 @@ def index(request, coin="btc"):
     filtro = request.GET.get('filter', '')
           
     line_chart = pygal.Line(width=900, height=500,include_x_axis=False,
-                            x_title="Horas", y_title="R$", human_readable=True,
+                            x_title="Horas", y_title="R$", 
                             legend_at_bottom=True)
     line_chart.title = 'Valor LiteCoin Mercado Bitcoin'
 
