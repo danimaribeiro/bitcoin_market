@@ -1,5 +1,5 @@
 #coding=utf-8
-import pygal
+import pygal, json, calendar, decimal
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.template import RequestContext, loader
@@ -10,8 +10,20 @@ from django.views.generic import TemplateView,ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.core.urlresolvers import reverse_lazy
 
-def admin(request):
-    return render(request, "market/index-admin.html")
+def decimal_default(obj):
+    if isinstance(obj, decimal.Decimal):
+        return float(obj)
+    raise TypeError
+
+def Graficos(request):
+    if request.is_ajax():
+        base = datetime.utcnow() - timedelta(hours=2)
+        inicio = base + timedelta(days=-7)
+        negociacoes = Trade.objects.filter(date__gte=inicio, coin='ltc').order_by('date')      
+        dados = [[ (calendar.timegm(x.date.timetuple()) * 1000), x.price ] for x in negociacoes]
+        return HttpResponse(json.dumps(dados, default=decimal_default), content_type="application/json")
+    
+    return render(request, "market/graficos.html")
 
 class OrderList(ListView):
     model = Order
