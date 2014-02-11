@@ -19,7 +19,7 @@ def Graficos(request):
     if request.is_ajax():
         base = datetime.utcnow() - timedelta(hours=2)
         inicio = base + timedelta(days=-7)
-        negociacoes = Trade.objects.filter(date__gte=inicio, coin='ltc').order_by('date')      
+        negociacoes = Trade.objects.filter(date__gte=inicio, coin='btc-usd').order_by('date')      
         dados = [[ (calendar.timegm(x.date.timetuple()) * 1000), x.price ] for x in negociacoes]
         return HttpResponse(json.dumps(dados, default=decimal_default), content_type="application/json")
     

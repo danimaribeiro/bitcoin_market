@@ -4,142 +4,200 @@
 
 {% block estilos %}
 
-<style type="text/css"> 
-    
-.demo-container {
-	box-sizing: border-box;
-	width: 850px;
-	height: 450px;
-	padding: 20px 15px 15px 15px;
-	margin: 15px auto 30px auto;
-	border: 1px solid #ddd;
-	background: #fff;
-	background: linear-gradient(#f6f6f6 0, #fff 50px);
-	box-shadow: 0 3px 10px rgba(0,0,0,0.15);
-}
+<style type="text/css">
+	.demo-container {
+		box-sizing: border-box;
+		width: 850px;
+		height: 450px;
+		padding: 20px 15px 15px 15px;
+		margin: 15px auto 30px auto;
+		border: 1px solid #ddd;
+		background: #fff;
+		background: linear-gradient(#f6f6f6 0, #fff 50px);
+		box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+	}
 
-.demo-placeholder {
-	width: 100%;
-	height: 100%;
-	font-size: 14px;
-	line-height: 1.2em;
-}
+	.demo-placeholder {
+		width: 100%;
+		height: 100%;
+		font-size: 14px;
+		line-height: 1.2em;
+	}
 
-.legend table {
-	border-spacing: 5px;
-}
+	.legend table {
+		border-spacing: 5px;
+	}
 </style>
 
 {% endblock %}
 
 {% block content %}
 <div class="row">
-    <div class="col-lg-12">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <i class="fa fa-bar-chart-o fa-fw"></i>
-                Gráfico de negociações
-            </div>
-            <div class="panel-body">            
-              <div class="row">
-                  <div class="col-lg-2 col-sm-offset-1">                      
-                      <select id="moeda" class='form-control'>
-                          <option>Bitcoin</option>
-                          <option>Litecoin</option>
-                      </select>  
-                  </div>
-                  <div class="col-lg-2">   
-                   <select id="mercado" class='form-control'>
-                          <option>Mercado bitcoin</option>
-                          <option>MTGox</option>
-                      </select>    
-                  </div>
-                  <button class="btn btn-outline btn-success btn-sm">Filtrar</button>
-              </div>            
-              <div class="demo-container">
-                    <div id="placeholder" class="demo-placeholder" 
-                         style="float: left; width: 650px; padding: 0px; position: relative;">
-                        </div>
-                    <div id="overview" class="demo-placeholder"
-                         style="float: right; width: 160px; height: 125px; padding: 0px; position: relative;">
-                   </div>
-              </div>
-            </div>
-        </div>
-    </div>
+	<div class="col-lg-12">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<i class="fa fa-bar-chart-o fa-fw"></i>
+				Gráfico de negociações
+			</div>
+			<div class="panel-body">
+				<div class="row">
+					<div class="col-lg-2" style="margin-left: 10px;">
+						<select id="moeda" class='form-control'>
+							<option value="btc">Bitcoin</option>
+							<option value='ltc'>Litecoin</option>
+						</select>
+					</div>
+					<div class="col-lg-2">
+						<select id="mercado" class='form-control'>
+							<option value="">Mercado bitcoin</option>
+							<option value="-usd">MTGox</option>
+						</select>
+					</div>
+					<div class="col-lg-2">
+						<input id="start" type="text" class="form-control"/>
+					</div>
+					<div class="col-lg-2">
+						<input id="end" type="text" class="form-control"/>
+					</div>
+					<div class="col-lg-2">
+						<select id="intervalo" class='form-control'>
+							<option value="1 min">1 Minuto</option>
+							<option value="5 min">5 minutos</option>
+							<option value="20 min">20 minutos</option>
+							<option value="30 min">30 minutos</option>
+							<option value="1 H">1 hora</option>
+							<option value="2 H">2 hora</option>
+							<option value="6 H">6 hora</option>
+							<option value="1 D">1 dia</option>
+						</select>
+					</div>
+					<button class="btn btn-outline btn-success btn-sm" onclick="getData();">
+						Filtrar
+					</button>
+				</div>
+				<div class="demo-container">
+					<div id="placeholder" class="demo-placeholder"
+					style="float: left; width: 650px; padding: 0px; position: relative;"></div>
+					<div id="overview" class="demo-placeholder"
+					style="float: right; width: 160px; height: 125px; padding: 0px; position: relative;"></div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 {% endblock %}
 
 {% block scripts %}
 {% load static %}
-    <script src="{% static 'js/plugins/flot/jquery.flot.js' %}"></script>
-    <script src="{% static 'js/plugins/flot/jquery.flot.tooltip.min.js' %}"></script>
-    <script src="{% static 'js/plugins/flot/jquery.flot.resize.js' %}"></script>
-    <script src="{% static 'js/plugins/flot/jquery.flot.time.js' %}"></script>
-    <script src="{% static 'js/plugins/flot/jquery.flot.selection.js' %}"></script>
-    <script type="text/javascript">
-	$(function() {
-		var options = {			
-			series: {
-				lines: {show: true, fill: true},
-				points: {show: false}
+<script src="{% static 'js/plugins/flot/jquery.flot.js' %}"></script>
+<script src="{% static 'js/plugins/flot/jquery.flot.tooltip.min.js' %}"></script>
+<script src="{% static 'js/plugins/flot/jquery.flot.resize.js' %}"></script>
+<script src="{% static 'js/plugins/flot/jquery.flot.time.js' %}"></script>
+<script src="{% static 'js/plugins/flot/jquery.flot.selection.js' %}"></script>
+<script type="text/javascript">
+	var options = {
+		series : {
+			lines : {
+				show : true,
+				fill : true
 			},
-            grid:{
-                hoverable: true,
-                autoHighlight: true
-            },
-            tooltip: true,
-            tooltipOpts: {
-                content: "%x: '%s' - R$ %y.4",
-                xDateFormat: "%d/%m/%Y %H:%M",
-                shifts: {
-                    x: -60,
-                    y: 25
-                }
-            },
-            yaxis: {ticks: 10, min:30, max:60},
-            xaxis: { mode: "time",  timeformat: "%d/%m/%Y %H:%M" },
-			selection: {mode: "xy"}        
-		};
+			points : {
+				show : false
+			}
+		},
+		grid : {
+			hoverable : true,
+			autoHighlight : true
+		},
+		tooltip : true,
+		tooltipOpts : {
+			content : "%x: '%s' - R$ %y.4",
+			xDateFormat : "%d/%m/%Y %H:%M",
+			shifts : {
+				x : -60,
+				y : 25
+			}
+		},
+		yaxis : {
+			ticks : 4,
+			min : 1000
+		},
+		xaxis : {
+			mode : "time",
+			timeformat : "%d/%m/%Y %H:%M"
+		},
+		selection : {
+			mode : "xy"
+		}
+	};
 
-        var plot = $.plot("#placeholder", [], options);
-        $.getJSON( "{% url 'market.views.Graficos' %}", function( dados ) {          
-            var startData = [
-                { label: "Litecoin", data: dados }
-            ];		      
-            plot = $.plot("#placeholder", startData, options);        
+	var plot = $.plot("#placeholder", [], options);
+	$.getJSON("/graph_api/chart?interval=1&type_interval=min&coin=btc-usd", function(dados) {
+		var startData = [{
+			label : "Litecoin",
+			data : dados
+		}];
+		for (var i = 0; i < dados.length; i++)
+			options.yaxis.min = ((dados[i][1]) - 10) < options.yaxis.min ? ((dados[i][1]) - 10) : options.yaxis.min;
+		plot = $.plot("#placeholder", startData, options);
 
-            // Create the overview plot
-            options.yaxis.ticks = 4;
-            options.xaxis.ticks = 2;
-            var overview = $.plot("#overview", startData, options);
+		// Create the overview plot
+		options.yaxis.ticks = 4;
+		options.xaxis.ticks = 2;
+		var overview = $.plot("#overview", startData, options);
 
-		    // now connect the two
-		    $("#placeholder").bind("plotselected", function (event, ranges) {
-                // clamp the zooming to prevent eternal zoom
-                if (ranges.xaxis.to - ranges.xaxis.from < 0.00001) {
-                    ranges.xaxis.to = ranges.xaxis.from + 0.00001;
-                }
-                if (ranges.yaxis.to - ranges.yaxis.from < 0.00001) {
-                    ranges.yaxis.to = ranges.yaxis.from + 0.00001;
-                }
-                // do the zooming
-                plot = $.plot("#placeholder", startData,
-                    $.extend(true, {}, options, {
-                        xaxis: { min: ranges.xaxis.from, max: ranges.xaxis.to },
-                        yaxis: { min: ranges.yaxis.from, max: ranges.yaxis.to }
-                    })
-                );
-    
-                // don't fire event on the overview to prevent eternal loop
-                overview.setSelection(ranges, true);
-		    });
+		// now connect the two
+		$("#placeholder").bind("plotselected", function(event, ranges) {
+			// clamp the zooming to prevent eternal zoom
+			if (ranges.xaxis.to - ranges.xaxis.from < 0.00001) {
+				ranges.xaxis.to = ranges.xaxis.from + 0.00001;
+			}
+			if (ranges.yaxis.to - ranges.yaxis.from < 0.00001) {
+				ranges.yaxis.to = ranges.yaxis.from + 0.00001;
+			}
+			// do the zooming
+			plot = $.plot("#placeholder", startData, $.extend(true, {}, options, {
+				xaxis : {
+					min : ranges.xaxis.from,
+					max : ranges.xaxis.to
+				},
+				yaxis : {
+					min : ranges.yaxis.from,
+					max : ranges.yaxis.to
+				}
+			}));
 
-            $("#overview").bind("plotselected", function (event, ranges) {
-                plot.setSelection(ranges);
-            });
-        });
+			// don't fire event on the overview to prevent eternal loop
+			overview.setSelection(ranges, true);
+		});
+
+		$("#overview").bind("plotselected", function(event, ranges) {
+			plot.setSelection(ranges);
+		});
 	});
-        
-    </script>
+
+	function getData() {
+		interval = $('#intervalo :selected').val();
+		interval = interval.split(' ');
+		start = $('#start').val();
+		end = $('#end').val();
+
+		var url = "/graph_api/chart?interval=" + interval[0] + "&type_interval=" + interval[1];
+		if (start != '' && end != '')
+			url += '&start=' + start + '&end=' + end;
+
+		var moeda = $('#moeda').val() + $('#mercado').val();
+		url += '&coin=' + moeda;
+
+		$.getJSON(url, function(dados) {
+			var startData = [{
+				label : "Litecoin",
+				data : dados
+			}];
+			for (var i = 0; i < dados.length; i++)
+				options.yaxis.min = ((dados[i][1]) - 10) < options.yaxis.min ? ((dados[i][1]) - 10) : options.yaxis.min;
+			plot = $.plot("#placeholder", startData, options);
+		});
+	}
+</script>
 {% endblock %}

@@ -8,7 +8,6 @@ urlpatterns = patterns('',
     # Examples:
     url(r'^market/', include('market.urls')),
     url(r'^$', views.OrderList.as_view() , name='home'),
-    # url(r'^blog/', include('blog.urls')),
-
+    url(r'^graph_api/', include('graph_api.urls')),
     url(r'^admin/', include(admin.site.urls)),
 )
