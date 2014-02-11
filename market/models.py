@@ -70,6 +70,6 @@ class BuySellOrder(models.Model):
 class Settings(models.Model):
     key = models.CharField(_('Chave'), max_length=50, null=False, blank=False, unique=True)
     value = models.CharField(_('Valor'), max_length=50)
-    description = models.TextField(_('Descrição'), null=True, blank=True)
+    description = models.TextField(_(u'Descrição'), null=True, blank=True)
 
     __unicode__ = lambda self: u'%s = %s' % (self.key, self.value)
