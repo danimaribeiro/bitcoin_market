@@ -220,6 +220,11 @@
     	$('#end').datetimepicker({
       		language: 'pt-BR'
     	});
+    	var today = new Date();
+		var tomorrow = new Date();
+		tomorrow.setDate(today.getDate()-1);
+    	$('#start').data('datetimepicker').setDate(tomorrow);
+	    $('#end').data('datetimepicker').setLocalDate(new Date());	    
 		chart = new CanvasJS.Chart("grafico",
 	    {
 	      zoomEnabled: true,
@@ -227,7 +232,7 @@
 	        text: "Valor Bitcoin - Intervalo" 
 	      },
 	      axisX:{
-	        labelAngle:45,
+	        labelAngle:90,
 	        valueFormatString: "DD/MM HH:mm"
 	      },	      
 	      axisY :{
@@ -253,7 +258,7 @@
 	    var moeda = $('#moeda').val() + $('#mercado').val();
 		url += '&coin=' + moeda;
 	    if (start!=end)
-			url += '&start=' + start + '&end=' + end;
+			url += '&start=' + start.getTime() + '&end=' + end.getTime();
 		
     	$.getJSON(url, function(dados) {
     	 	data[0].dataPoints = [];

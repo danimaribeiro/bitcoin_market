@@ -37,8 +37,8 @@ def time_series(request):
     start = request.GET.get('start', '') 
     end = request.GET.get('end', '')
             
-    start = pandas.to_datetime(start).to_pydatetime() + timedelta(hours=2) if start != '' else datetime.now() - timedelta(hours=2)
-    end = pandas.to_datetime(end).to_pydatetime() + timedelta(hours=2) if end != '' else datetime.now() - timedelta(hours=0)
+    start = pandas.to_datetime(int(start), unit='ms').to_pydatetime() + timedelta(hours=2) if start != '' else datetime.now() - timedelta(hours=4)
+    end = pandas.to_datetime(int(end), unit='ms').to_pydatetime() + timedelta(hours=2) if end != '' else datetime.now() - timedelta(hours=0)
     
     dados = pandas.date_range(start=start, end=end, freq='%s%s' % (interval, type_interval))        
     objetos = filter_data(start, end, coin, interval, type_interval)
@@ -49,11 +49,9 @@ def real_time(request):
     #Get dates   
     start = request.GET.get('start', '')  
     end = request.GET.get('end', '')
-    if start==end:
-        start = ''; end='' 
-         
-    start = pandas.to_datetime(start).to_pydatetime() + timedelta(hours=2) if start != '' else datetime.now() - timedelta(hours=2)
-    end = pandas.to_datetime(end).to_pydatetime() + timedelta(hours=2) if end != '' else datetime.now() - timedelta(hours=0)
+
+    start = pandas.to_datetime(int(start), unit='ms').to_pydatetime() + timedelta(hours=2) if start != '' else datetime.now() - timedelta(hours=4)
+    end = pandas.to_datetime(int(end), unit='ms').to_pydatetime() + timedelta(hours=2) if end != '' else datetime.now() - timedelta(hours=0)
        
     coin = request.GET.get('coin', 'btc')
     query = Trade.objects.filter(date__gte=start, date__lte=end, coin=coin)
