@@ -26,21 +26,39 @@ def filter_data(start, end, coin, interval, type):
     q = q.annotate(total=Sum('amount'))
     q = q.annotate(price=Avg('price'))      
     q = q.order_by('hour')
-    print q.query
     return  [ [ x['hour'], x['price']] for x in q]   
 
 def time_series(request):
-    coin = request.GET.get('coin', '')
+    coin = request.GET.get('coin', 'btc')
     interval = request.GET.get('interval', '')
     type_interval = request.GET.get('type_interval', '')
-     
+          
     #Get dates  
     start = request.GET.get('start', '') 
     end = request.GET.get('end', '')
-    start = pandas.to_datetime(start, unit='s') if start != '' else datetime.utcnow() - timedelta(hours=6)
-    end = pandas.to_datetime(end, unit='s') if end != '' else datetime.utcnow() - timedelta(hours=0)
+            
+    start = pandas.to_datetime(start).to_pydatetime() + timedelta(hours=2) if start != '' else datetime.now() - timedelta(hours=2)
+    end = pandas.to_datetime(end).to_pydatetime() + timedelta(hours=2) if end != '' else datetime.now() - timedelta(hours=0)
     
     dados = pandas.date_range(start=start, end=end, freq='%s%s' % (interval, type_interval))        
     objetos = filter_data(start, end, coin, interval, type_interval)
     
-    return HttpResponse(json.dumps(objetos, default=decimal_default ), content_type="application/json")
+    return HttpResponse(json.dumps(objetos, default=decimal_default ), content_type="application/json") 
+ 
+def real_time(request):   
+    #Get dates   
+    start = request.GET.get('start', '')  
+    end = request.GET.get('end', '')
+    if start==end:
+        start = ''; end='' 
+         
+    start = pandas.to_datetime(start).to_pydatetime() + timedelta(hours=2) if start != '' else datetime.now() - timedelta(hours=2)
+    end = pandas.to_datetime(end).to_pydatetime() + timedelta(hours=2) if end != '' else datetime.now() - timedelta(hours=0)
+       
+    coin = request.GET.get('coin', 'btc')
+    query = Trade.objects.filter(date__gte=start, date__lte=end, coin=coin)
+    query = query.values('date', 'price', 'type').order_by('date')
+    objetos = [ [ x['date'], x['price'], x['type']] for x in query]
+        
+    return HttpResponse(json.dumps(objetos, default=decimal_default ), content_type="application/json") 
+    

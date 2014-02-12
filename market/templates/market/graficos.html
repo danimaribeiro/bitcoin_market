@@ -71,7 +71,7 @@
 							<option value="1 D">1 dia</option>
 						</select>
 					</div>
-					<button class="btn btn-outline btn-success btn-sm" onclick="getData();">
+					<button class="btn btn-outline btn-success btn-sm" onclick="getData();filterData();">
 						Filtrar
 					</button>
 				</div>
@@ -81,6 +81,11 @@
 					<div id="overview" class="demo-placeholder"
 					style="float: right; width: 160px; height: 125px; padding: 0px; position: relative;"></div>
 				</div>
+				
+				<div class="demo-container">
+					<div id="grafico" class="demo-placeholder"
+					style="float: left; width: 100%; padding: 0px; position: relative;"></div>					
+				</div>				
 			</div>
 		</div>
 	</div>
@@ -94,6 +99,9 @@
 <script src="{% static 'js/plugins/flot/jquery.flot.resize.js' %}"></script>
 <script src="{% static 'js/plugins/flot/jquery.flot.time.js' %}"></script>
 <script src="{% static 'js/plugins/flot/jquery.flot.selection.js' %}"></script>
+
+<script src="{% static 'js/canvasjs.min.js' %}"></script>
+
 <script type="text/javascript">
 	var options = {
 		series : {
@@ -179,9 +187,9 @@
 	function getData() {
 		interval = $('#intervalo :selected').val();
 		interval = interval.split(' ');
-		start = $('#start').val();
-		end = $('#end').val();
-
+    	start = $('#start').data('datetimepicker').getLocalDate();
+	    end = $('#end').data('datetimepicker').getLocalDate();
+	    
 		var url = "/graph_api/chart?interval=" + interval[0] + "&type_interval=" + interval[1];
 		if (start != '' && end != '')
 			url += '&start=' + start + '&end=' + end;
@@ -199,5 +207,74 @@
 			plot = $.plot("#placeholder", startData, options);
 		});
 	}
+</script>
+
+<script type="text/javascript">
+	
+	var chart;
+	
+	$(document).ready(function(){
+		$('#start').datetimepicker({
+      		language: 'pt-BR'
+    	});
+    	$('#end').datetimepicker({
+      		language: 'pt-BR'
+    	});
+		chart = new CanvasJS.Chart("grafico",
+	    {
+	      zoomEnabled: true,
+	      title:{
+	        text: "Valor Bitcoin - Intervalo" 
+	      },
+	      axisX:{
+	        labelAngle:45,
+	        valueFormatString: "DD/MM HH:mm"
+	      },	      
+	      axisY :{
+	        includeZero:false
+	      },	  
+	      legend: {
+       		horizontalAlign: "left"
+       	  },    
+	      data: data  // random generator below	      
+	    });
+	
+	    chart.render();
+	    filterData();
+    });   
+    
+    function filterData(){
+    	interval = $('#intervalo :selected').val();
+		interval = interval.split(' ');    	
+    	start = $('#start').data('datetimepicker').getLocalDate();
+	    end = $('#end').data('datetimepicker').getLocalDate();
+	    
+	    var url = "/graph_api/realtime?interval=" + interval[0] + "&type_interval=" + interval[1];
+	    var moeda = $('#moeda').val() + $('#mercado').val();
+		url += '&coin=' + moeda;
+	    if (start!=end)
+			url += '&start=' + start + '&end=' + end;
+		
+    	$.getJSON(url, function(dados) {
+    	 	data[0].dataPoints = [];
+    	 	data[1].dataPoints = [];
+	    	for(var i in dados){
+	    		var dataUtc = new Date(0);
+	    		dataUtc.setUTCMilliseconds(dados[i][0]);
+	    		if(dados[i][2] == 'buy')	    		
+	    			data[0].dataPoints.push({ x: dataUtc, y:dados[i][1]});
+	    		else
+	    			data[1].dataPoints.push({ x: dataUtc, y:dados[i][1]});
+	    	}
+	    	chart.render();
+	    });
+    }
+	   	
+	var data = [];
+   	var dataPointsBuy = [];
+   	var dataPointsSell = [];     	
+  	data.push( { dataPoints: dataPointsBuy, type:'line', xValueType:'dateTime',legendText: "Compra", showInLegend: true,} );
+  	data.push( { dataPoints: dataPointsSell, type:'line', xValueType:'dateTime',legendText: "Venda", showInLegend: true, } ); 
+  
 </script>
 {% endblock %}

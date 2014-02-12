@@ -22,8 +22,6 @@ from datetime import datetime, timedelta
 import calendar
 import os
 import time
-from market.models import Market
-
 
 
 def buscarJson(url):
@@ -37,8 +35,7 @@ def executar(inicio, fim):
     
     pfim =  datetime.utcnow() - timedelta(hours=fim)    
     sfim = calendar.timegm(pfim.utctimetuple())
-    
-    
+        
     sites = [
          { 'url': "https://www.mercadobitcoin.com.br/api/trades_litecoin/" + str(segundos) + "/" + str(sfim),
           'coin': 'ltc', 'market':'mercado_bitcoin'},
@@ -57,9 +54,9 @@ def executar(inicio, fim):
             t = Trade()
             t.tid = item["tid"]
             if site['market']!='mtgox':
-                t.date = datetime.fromtimestamp(item["date"]) - timedelta(hours=2)
+                t.date = datetime.fromtimestamp(item["date"])
             else:
-                t.date = datetime.fromtimestamp(int(item["tid"]) /  1000000) - timedelta(hours=2)
+                t.date = datetime.fromtimestamp(int(item["tid"]) /  1000000)
             t.price = item["price"]
             t.amount = item["amount"]
             t.type = item.get("type", item.get('trade_type',''))
@@ -72,9 +69,11 @@ def validar_trades():
     #sms.send_sms('!')
 
 if __name__ == '__main__':
-    try:
+    try:        
         os.environ.setdefault("DJANGO_SETTINGS_MODULE", "coinmarket.settings")
+        
         from market.models import Trade
+        from market.models import Market
         
         arguments = docopt(__doc__, version='Worker 1.0')
         
