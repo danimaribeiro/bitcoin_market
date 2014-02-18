@@ -1,0 +1,42 @@
+{% extends "market/layout.html" %}
+
+{% block title %}Mercados configurados{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <i class="fa fa-bar-chart-o fa-fw"></i>
+                Mercados configurados
+                <a style="margin-left:15px;" class="btn btn-outline btn-success btn-xs" href="{% url "configuration_new" %}">Nova configuração</a>
+            </div>
+               <div class="panel-body"> 
+                 <div class="table-responsive">
+                    <table class="table">
+                         <thead>
+                             <tr>
+                                 <th>#</th>
+                                 <th>Mercado</th>
+                                 <th>Ativa</th>                                
+                             </tr>
+                        </thead>
+                        <tbody>
+                    {% for conf in object_list %}
+                       <tr>
+                         <td><a href="{% url "configuration_update" conf.id %}">{{conf.id}}</a></td>
+                         <td>{{ conf.market.description }}</td>
+                         <td>{{ conf.active }}</td>                         
+                        </tr>
+                       {% endfor %}
+                       </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>                  
+
+
+{% endblock %}

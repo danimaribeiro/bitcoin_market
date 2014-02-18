@@ -1,19 +1,24 @@
 #coding=utf-8
 import pygal, json, calendar, decimal
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext, loader
-from market.models import Trade, Order
-from itertools import groupby
+from market.models import Trade
 from datetime import datetime, timedelta
-from django.views.generic import TemplateView,ListView
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from django.core.urlresolvers import reverse_lazy
+from django.contrib.auth import authenticate, login
+from django.views.generic.edit import FormView
+from django.contrib.auth.models import User
+from django import forms
+from django.contrib.auth.forms import AuthenticationForm
+
 
 def decimal_default(obj):
     if isinstance(obj, decimal.Decimal):
         return float(obj)
     raise TypeError
+
+def home(request):
+    return render(request, "market/graficos.html")
 
 def Graficos(request):
     if request.is_ajax():
@@ -24,21 +29,6 @@ def Graficos(request):
         return HttpResponse(json.dumps(dados, default=decimal_default), content_type="application/json")
     
     return render(request, "market/graficos.html")
-
-class OrderList(ListView):
-    model = Order
-
-class OrderCreate(CreateView):
-    model = Order
-    success_url = reverse_lazy('order_list')
-
-class OrderUpdate(UpdateView):
-    model = Order
-    success_url = reverse_lazy('order_list')
-
-class OrderDelete(DeleteView):
-    model = Order
-    success_url = reverse_lazy('order_list')
 
 
 # Create your views here.

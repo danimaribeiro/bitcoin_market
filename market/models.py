@@ -2,6 +2,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
+import reversion
 
 # Create your models here.
 
@@ -12,8 +13,13 @@ ORDER_STATUS = (
                 ('cancelled', 'Cancelada'),
     )
     
+ORDER_TYPE = (
+              ('buy', 'Comprar'),
+              ('sell', 'Vender'),
+              )
+
 class Market(models.Model):
-    id = models.BigIntegerField('Identificador', primary_key=True)
+    id = models.AutoField('Identificador', primary_key=True)
     description = models.CharField('Descrição', max_length=100)
     url_api_public = models.CharField('Url API Pública', max_length=100)
     url_api_private = models.CharField('Url API Privada', max_length=100)   
@@ -24,10 +30,12 @@ class Market(models.Model):
         verbose_name = "Mercado"        
     
 class MarketConfiguration(models.Model):
-    market = models.OneToOneField(Market)
+    id = models.AutoField('Identificador', primary_key=True)
+    market = models.ForeignKey(Market, null=False, blank=False)
     access_key = models.CharField('Chave de acesso', max_length=100)
     access_sign = models.CharField('Código de acesso', max_length=200)
     belongs_to = models.ForeignKey(User,verbose_name='Usuário', null=False)
+    active = models.BooleanField('Ativo')
     
     __unicode__ = lambda self: u'%s' % (self.market.description)
     
@@ -47,7 +55,7 @@ class Order(models.Model):
     tid = models.AutoField('Identificador', primary_key=True)
     price = models.DecimalField('preco',max_digits=28, decimal_places=8)
     amount  = models.DecimalField('quantidade',max_digits=28, decimal_places=8)
-    type = models.CharField('Tipo', max_length=5)    
+    type = models.CharField('Tipo', max_length=5, choices=ORDER_TYPE)    
     sincronized = models.BooleanField('Sincronizada')
     status = models.CharField('Situação', max_length=10, choices=ORDER_STATUS, default='waiting')
     market = models.ForeignKey(Market, null=False, blank=False) 
@@ -55,15 +63,17 @@ class Order(models.Model):
     
     __unicode__ = lambda self: u'%s - Preço: %s Quantidade: %s' % (self.type, self.price, self.amount)
     
-    class Meta:
+    class Meta: 
         verbose_name = "Ordem de compra"
         verbose_name_plural = "Ordens de compra"
+
+reversion.register(Order)
 
 class BuySellOrder(models.Model):
     id = models.BigIntegerField('Identificador', primary_key=True)
     price = models.DecimalField('preco', max_digits=28, decimal_places=8)
     amount  = models.DecimalField('quantidade',max_digits=28, decimal_places=8)
-    type = models.CharField('Tipo', max_length=5)
+    type = models.CharField('Tipo', max_length=5, choices=ORDER_TYPE)
     coin = models.CharField('Moeda', max_length=10)
     market = models.ForeignKey(Market, null=False, blank=False) 
 

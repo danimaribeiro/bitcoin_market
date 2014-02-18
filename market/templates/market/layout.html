@@ -241,7 +241,7 @@
                         <li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
                         </li>
                         <li class="divider"></li>
-                        <li><a href="login.html"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+                        <li><a href="{% url 'market_logout' %}"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
                         </li>
                     </ul>
                     <!-- /.dropdown-user -->
@@ -270,6 +270,7 @@
                     <li>
                         <a href="{% url 'market.views.Graficos' %}"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
                     </li>
+                    {% if user.is_authenticated %}
                     <li>
                         <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Gráficos<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
@@ -285,9 +286,14 @@
                     <li>
                         <a href="{% url 'order_list' %}"><i class="fa fa-edit fa-fw"></i> Ordens</a>
                     </li>
-                      <li>
-                        <a href="/admin"><i class="fa fa-sitemap fa-fw"></i> Admin</a>
+                    <li>
+                        <a href="{% url 'configuration_list' %}"><i class="fa fa-sitemap fa-fw"></i> Mercados</a>
                     </li>
+                    {% else %}
+                   	<li>
+                        <a href="{% url 'market_login' %}"><i class="fa fa-edit fa-fw"></i> Minha conta</a>
+                    </li>
+                    {% endif %}
                 </ul>
                 <!-- /#side-menu -->
             </div>

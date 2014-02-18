@@ -1,6 +1,6 @@
 {% extends "market/layout.html" %}
 
-{% block title %}Litecoin - Bitcoin Negociações{% endblock %}
+{% block title %}Configurações de mercados{% endblock %}
 
 {% block content %}
 <div class="row">
@@ -8,7 +8,7 @@
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<i class="fa fa-bar-chart-o fa-fw"></i>
-				Nova ordem
+				Configurar mercado - {% if creating %} Criando {% else %} {{object}} {% endif %}
 			</div>
 			<div class="panel-body">
 				{% load bootstrap %}
@@ -16,7 +16,7 @@
 					{% csrf_token %}
 					{{ form | bootstrap  }}
 					<input class="btn btn-outline btn-info" type="submit" value="Salvar" />
-					<a class="btn btn-outline btn-danger btn-xs" href="{% url "order_list" %}">Cancelar</a>
+					<a class="btn btn-outline btn-danger btn-xs" href="{% url "configuration_list" %}">Cancelar</a>
 				</form>
 
 			</div>

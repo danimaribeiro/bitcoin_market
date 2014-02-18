@@ -28,7 +28,7 @@
                         <tbody>
                     {% for order in object_list %}
                        <tr>
-                         <td><a href="{% url "order_edit" order.id %}">{{order.tid}}</a></td>
+                         <td><a href="{% url "order_update" order.tid %}">{{order.tid}}</a></td>
                          <td>{{ order.price }}</td>
                          <td>{{ order.amount }}</td>
                          <td>{{ order.type }}</td>
